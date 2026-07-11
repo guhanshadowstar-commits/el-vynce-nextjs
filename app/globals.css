@@ -1,26 +1,450 @@
 @import "tailwindcss";
 
+/* EL VYNCE — Achromatic Luxury design system, ported from the static site's
+   tailwind.config.js. Tailwind v4 reads theme tokens from CSS custom
+   properties instead of a JS config; this @theme block is the 1:1 port. */
+@theme {
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-secondary: #666666;
+  --color-on-surface-variant: #666666;
+  --color-surface-container: #f3f3f3;
+  --color-surface-container-low: #f9f9f9;
+  --color-outline-variant: #e5e5e5;
+
+  --spacing-unit: 8px;
+  --spacing-gutter: 24px;
+  --spacing-section-gap: 120px;
+  --spacing-container-max: 1440px;
+  --spacing-margin-desktop: 64px;
+  --spacing-margin-mobile: 20px;
+
+  --font-headline-lg: var(--font-bodoni-moda), serif;
+  --font-label-sm: var(--font-inter), sans-serif;
+  --font-headline-md: var(--font-bodoni-moda), serif;
+  --font-body-lg: var(--font-inter), sans-serif;
+  --font-body-md: var(--font-inter), sans-serif;
+  --font-display-lg: var(--font-bodoni-moda), serif;
+
+  --text-headline-lg: 48px;
+  --text-headline-lg--line-height: 56px;
+  --text-headline-lg--letter-spacing: -0.01em;
+  --text-headline-lg--font-weight: 400;
+
+  --text-headline-lg-mobile: 32px;
+  --text-headline-lg-mobile--line-height: 40px;
+  --text-headline-lg-mobile--letter-spacing: -0.01em;
+  --text-headline-lg-mobile--font-weight: 400;
+
+  --text-headline-md: 32px;
+  --text-headline-md--line-height: 40px;
+  --text-headline-md--font-weight: 400;
+
+  --text-label-sm: 12px;
+  --text-label-sm--line-height: 16px;
+  --text-label-sm--letter-spacing: 0.1em;
+  --text-label-sm--font-weight: 500;
+
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+  --text-body-lg--letter-spacing: 0.01em;
+  --text-body-lg--font-weight: 400;
+
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+
+  --text-display-lg: 80px;
+  --text-display-lg--line-height: 90px;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 400;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #000000;
+  --white: #ffffff;
+  --gray: #666666;
+  --hairline: #e5e5e5;
+  --surface: #f9f9f9;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+* { box-sizing: border-box; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body {
+  background-color: var(--white);
+  color: var(--black);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.font-serif, .brand-wordmark, .headline {
+  font-family: var(--font-bodoni-moda), serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Product detail page: color swatch / size selector active states */
+.swatch-selected {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+.size-selected {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Glassmorphism per DESIGN.md: rgba(255,255,255,0.4) + blur(10px) + 1px #E5E5E5 border */
+.glass {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--hairline);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--hairline);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Sharp edges everywhere */
+button, input, textarea, select, .card, .glass, .glass-strong {
+  border-radius: 0;
+}
+
+.dot, .icon-circle {
+  border-radius: 9999px;
+}
+
+/* No-scrollbar helper */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Underline-style inputs */
+.input-underline {
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+  transition: border-color 0.3s ease;
+}
+.input-underline:focus {
+  border-bottom: 1px solid var(--black);
+  outline: none;
+}
+.input-underline.error {
+  border-bottom: 1px solid #ba1a1a;
+}
+
+.label-sm {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Product card hover */
+.product-card .product-image {
+  transition: transform 0.7s ease-out;
+}
+.product-card:hover .product-image {
+  transform: scale(1.03);
+}
+
+/* Accordion */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease;
+  opacity: 0;
+}
+.accordion-active .accordion-content {
+  max-height: 240px;
+  opacity: 1;
+  padding-bottom: 1rem;
+}
+.accordion-icon { transition: transform 0.3s ease; }
+.accordion-active .accordion-icon { transform: rotate(45deg); }
+
+/* Cart drawer */
+#cart-overlay {
+  transition: opacity 0.4s ease;
+}
+#cart-drawer {
+  transition: transform 0.4s ease;
+}
+
+/* Hero wordmark overlap */
+.hero-wordmark {
+  font-family: var(--font-bodoni-moda), serif;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  mix-blend-mode: difference;
+  color: var(--white);
+  pointer-events: none;
+}
+
+canvas#hero-shader, canvas#pdp-three {
+  pointer-events: none;
+}
+
+.hero-wordmark-light {
+  font-family: var(--font-bodoni-moda), serif;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  color: var(--black);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+#hero-silhouette canvas {
+  display: block;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Site-wide interaction layer ---- */
+
+.ev-cursor-active, .ev-cursor-active * {
+  cursor: none !important;
+}
+
+.ev-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--black);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  will-change: transform;
+  transition: transform 0.04s linear, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+  transform: translate(-50%, -50%);
+}
+
+.ev-cursor-dot.is-hovering {
+  width: 3px;
+  height: 3px;
+  opacity: 0.4;
+}
+
+.ev-cursor-dot.is-clicking {
+  width: 8px;
+  height: 8px;
+}
+
+.ev-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--black);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  opacity: 0.5;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.3s ease;
+}
+
+.ev-cursor-ring.is-hovering {
+  width: 56px;
+  height: 56px;
+  opacity: 0.25;
+}
+
+.ev-cursor-ring.is-clicking {
+  width: 28px;
+  height: 28px;
+  opacity: 0.8;
+}
+
+.hero-wordmark-light .letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.3em);
+  animation: ev-letter-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes ev-letter-in {
+  to { opacity: 0.28; transform: translateY(0); }
+}
+
+.hero-wordmark-light,
+.hero-wordmark-light .letter {
+  transition: color 1.6s ease;
+}
+header.is-night .hero-wordmark-light,
+header.is-night .hero-wordmark-light .letter {
+  color: var(--white);
+}
+header.is-night .hero-wordmark-light {
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.35);
+}
+
+header .font-body-lg.text-primary {
+  transition: color 1.6s ease;
+}
+header.is-night .font-body-lg.text-primary {
+  color: var(--white);
+}
+
+header a.bg-primary.text-on-primary {
+  transition: background-color 1.6s ease, color 1.6s ease;
+}
+header.is-night a.bg-primary.text-on-primary {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-magnetic] {
+  display: inline-block;
+  will-change: transform;
+  transition: transform 0.15s ease-out;
+}
+
+.ev-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--black);
+  z-index: 10000;
+  transition: width 0.1s linear;
+}
+
+@media (pointer: coarse) {
+  .ev-cursor-dot, .ev-cursor-ring { display: none; }
+}
+
+/* Spinning Brand Stamp */
+body.ev-has-hero .ev-brand-stamp {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+body.ev-has-hero.ev-stamp-in .ev-brand-stamp {
+  opacity: 1;
+}
+
+.ev-brand-stamp {
+  position: fixed;
+  bottom: 90px;
+  right: 16px;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+  z-index: 200;
+  display: block;
+  animation: ev-stamp-float 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (min-width: 768px) {
+  .ev-brand-stamp {
+    bottom: 40px;
+    right: 40px;
+    width: 148px;
+    height: 148px;
+  }
+}
+
+@keyframes ev-stamp-float {
+  0%   { transform: translateY(0px)   translateX(0px); }
+  25%  { transform: translateY(-14px) translateX(7px); }
+  50%  { transform: translateY(-8px)  translateX(-9px); }
+  75%  { transform: translateY(-20px) translateX(5px); }
+  100% { transform: translateY(0px)   translateX(0px); }
+}
+
+.ev-stamp-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.68;
+}
+
+.ev-stamp-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 66px;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  display: block;
+}
+
+/* Panther Page Intro */
+.ev-panther-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: #000000;
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ev-panther-loader.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ev-panther-img {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  animation: ev-panther-breathe 2.2s ease-in-out infinite;
+  filter: invert(1);
+}
+
+@keyframes ev-panther-breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.8; }
+  50%       { transform: scale(1.07); opacity: 1;   }
 }
