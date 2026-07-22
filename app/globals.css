@@ -372,7 +372,9 @@ body.ev-has-hero.ev-stamp-in .ev-brand-stamp {
   width: 100px;
   height: 100px;
   pointer-events: none;
-  z-index: 200;
+  /* Below Nav (z-50) and the cart drawer (z-[60]) so it can never float on
+     top of the checkout button when the cart is open on mobile. */
+  z-index: 40;
   display: block;
   animation: ev-stamp-float 9s ease-in-out infinite;
   will-change: transform;

@@ -16,14 +16,26 @@ import PlaceholderSwatch from "@/components/PlaceholderSwatch";
       server-side and records the order in the CRM.
    4. Clear the cart, show the confirmation page. */
 
+// Every field is mandatory (required). Name/email/phone/address are the CRM
+// essentials; email is format-checked by the browser (type="email"), and
+// phone/PIN carry pattern + inputMode so mobiles show the number pad and a
+// junk value is rejected before payment — not just an empty one.
 const FIELDS = [
   { key: "name", label: "Full Name", type: "text", autoComplete: "name", required: true },
   { key: "email", label: "Email", type: "email", autoComplete: "email", required: true },
-  { key: "phone", label: "Phone (WhatsApp preferred)", type: "tel", autoComplete: "tel", required: true },
+  {
+    key: "phone", label: "Phone (WhatsApp preferred)", type: "tel", autoComplete: "tel",
+    required: true, inputMode: "tel", pattern: "[0-9+\\-\\s]{10,15}",
+    title: "Enter a valid phone number (at least 10 digits)",
+  },
   { key: "address", label: "Delivery Address", type: "text", autoComplete: "street-address", required: true },
   { key: "city", label: "City", type: "text", autoComplete: "address-level2", required: true },
   { key: "state", label: "State", type: "text", autoComplete: "address-level1", required: true },
-  { key: "pincode", label: "PIN Code", type: "text", autoComplete: "postal-code", required: true },
+  {
+    key: "pincode", label: "PIN Code", type: "text", autoComplete: "postal-code",
+    required: true, inputMode: "numeric", pattern: "\\d{6}", maxLength: 6,
+    title: "Enter your 6-digit PIN code",
+  },
 ];
 
 function loadRazorpayScript() {
@@ -141,7 +153,7 @@ export default function CheckoutPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-16">
         {/* Delivery details */}
-        <form onSubmit={handleSubmit} className="lg:col-span-7 flex flex-col gap-10">
+        <form onSubmit={handleSubmit} className="order-2 lg:order-1 lg:col-span-7 flex flex-col gap-10">
           <h2 className="label-sm border-b border-outline-variant/40 pb-4">Delivery Details</h2>
           {FIELDS.map((f) => (
             <label key={f.key} className="flex flex-col gap-2">
@@ -150,6 +162,10 @@ export default function CheckoutPage() {
                 type={f.type}
                 required={f.required}
                 autoComplete={f.autoComplete}
+                inputMode={f.inputMode}
+                pattern={f.pattern}
+                title={f.title}
+                maxLength={f.maxLength}
                 value={form[f.key]}
                 onChange={setField(f.key)}
                 className="input-underline py-3 font-body-md text-primary"
@@ -179,7 +195,7 @@ export default function CheckoutPage() {
         </form>
 
         {/* Order summary */}
-        <aside className="lg:col-span-5">
+        <aside className="order-1 lg:order-2 lg:col-span-5">
           <div className="glass p-8 sticky top-24">
             <h2 className="label-sm border-b border-outline-variant/40 pb-4 mb-8">Your Order</h2>
             <div className="space-y-8">

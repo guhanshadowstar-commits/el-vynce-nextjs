@@ -9,7 +9,7 @@ export default function NotFound() {
   return (
     <main className="min-h-screen pt-16 flex flex-col items-center justify-center text-center px-6">
       <div data-reveal>
-        <h1 className="font-headline-lg text-display-404 mb-4">404</h1>
+        <h1 className="font-headline-lg text-[20vw] leading-none md:text-display-lg mb-4">404</h1>
         <h2 className="font-headline-lg text-2xl md:text-3xl mb-6">Page not found</h2>
         <p className="text-secondary max-w-sm mb-12">
           The page you&apos;re looking for doesn&apos;t exist or has moved. Let&apos;s get you back to

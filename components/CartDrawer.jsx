@@ -25,7 +25,11 @@ export default function CartDrawer() {
       >
         <div className="flex items-center justify-between px-8 h-20 border-b border-outline-variant/20">
           <h2 className="font-headline-md text-headline-md">Your Cart</h2>
-          <button className="material-symbols-outlined text-primary" onClick={closeCart}>
+          <button
+            className="min-w-11 min-h-11 flex items-center justify-center -mr-2 material-symbols-outlined text-primary"
+            onClick={closeCart}
+            aria-label="Close cart"
+          >
             close
           </button>
         </div>
@@ -54,19 +58,21 @@ export default function CartDrawer() {
                     </p>
                     <p className="label-sm text-on-surface-variant/60">{item.drop || ""}</p>
                     <div className="flex items-center justify-between pt-4">
-                      <div className="flex items-center border border-[#E5E5E5] px-3 py-1 gap-4">
+                      <div className="flex items-center border border-[#E5E5E5] gap-1">
                         <button
-                          className="material-symbols-outlined text-xs"
+                          className="min-w-11 min-h-11 flex items-center justify-center material-symbols-outlined text-xs"
                           style={{ fontSize: "16px" }}
                           onClick={() => updateQty(index, -1)}
+                          aria-label="Decrease quantity"
                         >
                           remove
                         </button>
                         <span className="label-sm">{item.qty}</span>
                         <button
-                          className="material-symbols-outlined text-xs"
+                          className="min-w-11 min-h-11 flex items-center justify-center material-symbols-outlined text-xs"
                           style={{ fontSize: "16px" }}
                           onClick={() => updateQty(index, 1)}
+                          aria-label="Increase quantity"
                         >
                           add
                         </button>

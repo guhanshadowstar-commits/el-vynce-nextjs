@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="bg-white border-t border-outline-variant/30 w-full py-section-gap">
       <div
-        className="flex flex-col items-center text-center px-margin-desktop w-full max-w-container-max mx-auto"
+        className="flex flex-col items-center text-center px-margin-mobile md:px-margin-desktop w-full max-w-container-max mx-auto"
         data-reveal
       >
         <span className="font-headline-md text-headline-md text-primary mb-8 block">EL VYNCE</span>
@@ -22,7 +22,7 @@ export default function Footer() {
             Contact
           </Link>
         </div>
-        <p className="label-sm text-[10px] text-secondary">© 2026 EL VYNCE. Made in Chennai, India.</p>
+        <p className="label-sm text-xs text-secondary">© 2026 EL VYNCE. Made in Chennai, India.</p>
       </div>
     </footer>
   );

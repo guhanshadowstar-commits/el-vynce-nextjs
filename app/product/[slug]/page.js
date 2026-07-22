@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
-import { getProductById } from "@/lib/products";
+import { getProductById, EL_VYNCE_PRODUCTS } from "@/lib/products";
 import ProductDetail from "@/components/ProductDetail";
+
+export async function generateStaticParams() {
+  return EL_VYNCE_PRODUCTS.map((p) => ({ slug: p.id }));
+}
 
 export default async function ProductPage({ params }) {
   const { slug } = await params;

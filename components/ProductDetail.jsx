@@ -100,7 +100,7 @@ export default function ProductDetail({ product }) {
         <div className="lg:col-span-5 flex flex-col">
           <div className="sticky top-24">
             <div className="flex flex-col gap-2 mb-8">
-              <h1 className="font-headline-lg text-headline-lg tracking-tight">{product.name}</h1>
+              <h1 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight">{product.name}</h1>
               <p className="text-secondary italic">Made to order. Production begins after your order is placed.</p>
               <span className="font-body-lg text-body-lg mt-4">{formatPrice(product.price)}</span>
               {!product.inStock && <span className="label-sm text-[#ba1a1a] mt-2">Currently sold out</span>}
@@ -108,14 +108,19 @@ export default function ProductDetail({ product }) {
 
             <div className="mb-10">
               <span className="label-sm block mb-4">Color</span>
-              <div className="flex gap-3">
+              <div className="flex gap-1">
                 {product.colors.map((c) => (
                   <button
                     key={c}
                     onClick={() => setSelectedColor(c)}
-                    className={`dot w-8 h-8 ${selectedColor === c ? "swatch-selected" : ""}`}
-                    style={{ background: c, border: "1px solid #e5e5e5" }}
-                  />
+                    aria-label={`Color ${c}`}
+                    className="min-w-11 min-h-11 flex items-center justify-center"
+                  >
+                    <span
+                      className={`dot w-8 h-8 block ${selectedColor === c ? "swatch-selected" : ""}`}
+                      style={{ background: c, border: "1px solid #e5e5e5" }}
+                    />
+                  </button>
                 ))}
               </div>
             </div>
@@ -130,7 +135,7 @@ export default function ProductDetail({ product }) {
                   Size Chart — {product.drop}
                 </button>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {product.sizes.map((s) => (
                   <button
                     key={s}
@@ -199,7 +204,11 @@ export default function ProductDetail({ product }) {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSizeChartOpen(false)} />
           <div className="glass-strong relative w-full max-w-2xl p-8 md:p-12">
-            <button className="absolute top-6 right-6 text-primary" onClick={() => setSizeChartOpen(false)}>
+            <button
+              className="absolute top-3 right-3 min-w-11 min-h-11 flex items-center justify-center text-primary"
+              onClick={() => setSizeChartOpen(false)}
+              aria-label="Close size chart"
+            >
               <span className="material-symbols-outlined">close</span>
             </button>
             <h2 className="font-headline-md text-headline-md mb-8">Size Chart — {product.drop}</h2>

@@ -10,7 +10,6 @@ const LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
-  { href: "/account", label: "Account" },
 ];
 
 export default function Nav() {
@@ -56,17 +55,22 @@ export default function Nav() {
           })}
         </div>
         <div className="flex items-center gap-6">
-          <button className="relative" onClick={toggleCart} aria-label="Open cart">
+          <button
+            className="relative min-w-11 min-h-11 flex items-center justify-center -mr-2"
+            onClick={toggleCart}
+            aria-label="Open cart"
+          >
             <span className="material-symbols-outlined text-primary">shopping_bag</span>
             {count > 0 && (
-              <span className="dot absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center">
+              <span className="dot absolute top-1 right-1 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center">
                 {count}
               </span>
             )}
           </button>
           <button
-            className="md:hidden material-symbols-outlined text-primary"
+            className="md:hidden min-w-11 min-h-11 flex items-center justify-center -mr-2 material-symbols-outlined text-primary"
             onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Toggle menu"
           >
             menu
           </button>
