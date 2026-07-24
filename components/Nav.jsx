@@ -28,7 +28,7 @@ export default function Nav() {
   return (
     <nav
       data-main-nav
-      className={`fixed top-0 w-full z-50 glass border-b border-outline-variant/30 ${
+      className={`fixed top-0 w-full z-50 glass-strong border-b border-outline-variant/30 ${
         scrolled ? "shadow-sm" : ""
       }`}
     >
@@ -46,7 +46,7 @@ export default function Nav() {
                 className={`label-sm transition-colors ${
                   isActive
                     ? "text-primary border-b border-primary pb-1"
-                    : "text-on-surface-variant hover:text-primary"
+                    : "text-primary/70 hover:text-primary"
                 }`}
               >
                 {link.label}
@@ -77,9 +77,9 @@ export default function Nav() {
         </div>
       </div>
       {mobileOpen && (
-        <div className="md:hidden glass border-t border-outline-variant/30 px-margin-mobile py-4 flex flex-col gap-4">
+        <div className="md:hidden glass-strong border-t border-outline-variant/30 px-margin-mobile py-4 flex flex-col gap-4">
           {LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="label-sm text-on-surface-variant">
+            <Link key={link.href} href={link.href} className="label-sm text-primary/70">
               {link.label}
             </Link>
           ))}
