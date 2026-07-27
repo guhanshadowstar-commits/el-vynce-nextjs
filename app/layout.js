@@ -1,6 +1,7 @@
 import { Bodoni_Moda, Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/CartContext";
+import { WishlistProvider } from "@/lib/WishlistContext";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -36,15 +37,31 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ClothingStore",
+              name: "EL VYNCE",
+              url: "https://elvynce.com/",
+              description:
+                "EL VYNCE — luxury minimal made-to-order Indian clothing. Achromatic, architectural, made for stillness.",
+              address: { "@type": "PostalAddress", addressLocality: "Chennai", addressCountry: "IN" },
+            }),
+          }}
+        />
       </head>
       <body className="bg-white text-primary font-body-md overflow-x-hidden">
         <PageLoader />
         <CartProvider>
-          <Nav />
-          {children}
-          <Footer />
-          <CartDrawer />
-          <SiteInteractions />
+          <WishlistProvider>
+            <Nav />
+            {children}
+            <Footer />
+            <CartDrawer />
+            <SiteInteractions />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

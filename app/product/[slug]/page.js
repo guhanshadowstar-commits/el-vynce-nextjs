@@ -11,7 +11,29 @@ export default async function ProductPage({ params }) {
   const product = getProductById(slug);
   if (!product) notFound();
 
-  return <ProductDetail product={product} />;
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: product.images && product.images.length ? product.images.map((i) => `https://elvynce.com${i}`) : undefined,
+    brand: { "@type": "Brand", name: "EL VYNCE" },
+    category: product.drop,
+    offers: {
+      "@type": "Offer",
+      url: `https://elvynce.com/product/${product.id}`,
+      priceCurrency: product.currency || "INR",
+      price: product.price,
+      availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+    },
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ProductDetail product={product} />
+    </>
+  );
 }
 
 export async function generateMetadata({ params }) {

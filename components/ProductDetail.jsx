@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { EL_VYNCE_PRODUCTS } from "@/lib/products";
 import { useCart } from "@/lib/CartContext";
+import { useWishlist } from "@/lib/WishlistContext";
 import { formatPrice } from "@/lib/format";
 import PlaceholderSwatch from "@/components/PlaceholderSwatch";
 import PdpViewer from "@/components/PdpViewer";
@@ -18,6 +19,7 @@ const SIZE_CHART_ROWS = [
 
 export default function ProductDetail({ product }) {
   const { addToCart } = useCart();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState(product.inStock ? product.sizes[0] : null);
@@ -100,8 +102,18 @@ export default function ProductDetail({ product }) {
         <div className="lg:col-span-5 flex flex-col">
           <div className="sticky top-24">
             <div className="flex flex-col gap-2 mb-8">
-              <h1 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight">{product.name}</h1>
-              <p className="text-secondary italic">Made to order. Production begins after your order is placed.</p>
+              <div className="flex items-start justify-between gap-4">
+                <h1 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight">{product.name}</h1>
+                <button
+                  onClick={() => toggleWishlist(product.id)}
+                  className="material-symbols-outlined text-primary flex-shrink-0 mt-2"
+                  style={{ fontVariationSettings: isWishlisted(product.id) ? "'FILL' 1" : "'FILL' 0" }}
+                  aria-label="Save to wishlist"
+                >
+                  {isWishlisted(product.id) ? "bookmark" : "bookmark_border"}
+                </button>
+              </div>
+              <p className="text-secondary italic">Cut only after you order — this exact piece doesn't exist yet.</p>
               <span className="font-body-lg text-body-lg mt-4">{formatPrice(product.price)}</span>
               {!product.inStock && <span className="label-sm text-[#ba1a1a] mt-2">Currently sold out</span>}
             </div>
@@ -235,8 +247,8 @@ export default function ProductDetail({ product }) {
               </table>
             </div>
             <p className="mt-8 text-secondary italic text-sm">
-              *Measurements are approximate guidance for our made-to-order pieces. Since each garment is cut after
-              your order is placed, contact us at elvynceofficial@gmail.com for a custom measurement fitting.
+              *Every EL VYNCE piece is cut after you order — not pulled off a shelf. Want it tailored to your exact
+              frame? Email elvynceofficial@gmail.com and we&apos;ll fit it to your measurements before it&apos;s cut.
             </p>
           </div>
         </div>

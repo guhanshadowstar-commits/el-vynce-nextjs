@@ -32,7 +32,7 @@ export function CartProvider({ children }) {
   }, [cart, hydrated]);
 
   const api = useMemo(() => {
-    const addToCart = (item) => {
+    const addToCart = (item, { silent = false } = {}) => {
       setCart((prev) => {
         const next = [...prev];
         const existing = next.find(
@@ -45,7 +45,9 @@ export function CartProvider({ children }) {
         }
         return next;
       });
-      setIsOpen(true);
+      // Quick-add (from a grid card) stays silent so browsing isn't
+      // interrupted — the button's own checkmark flash is the feedback.
+      if (!silent) setIsOpen(true);
     };
 
     const updateQty = (index, delta) => {

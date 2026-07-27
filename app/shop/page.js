@@ -83,7 +83,7 @@ function ShopContent() {
       <section className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-16">
           {list.map((p, i) => (
-            <ProductCard key={p.id} product={p} delay={(i % 4) * 90} />
+            <ProductCard key={p.id} product={p} delay={(i % 4) * 90} showQuickAdd />
           ))}
         </div>
       </section>

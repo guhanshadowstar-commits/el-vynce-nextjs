@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/CartContext";
+import { useWishlist } from "@/lib/WishlistContext";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -15,6 +16,7 @@ const LINKS = [
 export default function Nav() {
   const pathname = usePathname();
   const { count, toggleCart } = useCart();
+  const { count: wishlistCount } = useWishlist();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -55,6 +57,18 @@ export default function Nav() {
           })}
         </div>
         <div className="flex items-center gap-6">
+          <Link
+            href="/wishlist"
+            className="relative min-w-11 min-h-11 flex items-center justify-center"
+            aria-label="Open wishlist"
+          >
+            <span className="material-symbols-outlined text-primary">bookmark_border</span>
+            {wishlistCount > 0 && (
+              <span className="dot absolute top-1 right-1 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
           <button
             className="relative min-w-11 min-h-11 flex items-center justify-center -mr-2"
             onClick={toggleCart}
