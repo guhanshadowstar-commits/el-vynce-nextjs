@@ -11,7 +11,7 @@ export default function ProductCard({ product, delay = 0 }) {
       data-reveal-delay={delay}
     >
       <div className="relative aspect-[3/4] overflow-hidden border border-outline-variant/40 mb-6 bg-surface-container">
-        <div className="absolute top-4 left-4 z-10 glass px-3 py-1 label-sm text-[10px]">{product.drop}</div>
+        <div className="absolute top-4 left-4 z-10 glass px-2.5 py-1 label-sm text-[9px] tracking-wide hidden sm:block">{product.drop}</div>
         {product.isNew && (
           <div className="absolute top-4 right-4 z-10 glass bg-white/90 px-3 py-1 label-sm text-[10px]">New</div>
         )}
@@ -25,6 +25,7 @@ export default function ProductCard({ product, delay = 0 }) {
           <img
             src={product.images[0]}
             alt={product.name}
+            loading="lazy"
             className={`product-image w-full h-full object-cover ${!product.inStock ? "grayscale" : ""}`}
           />
         ) : (

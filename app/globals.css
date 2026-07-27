@@ -229,61 +229,86 @@ canvas#hero-shader, canvas#pdp-three {
   cursor: none !important;
 }
 
-.ev-cursor-dot {
+/* "Prowling Panther" cursor — ported from the static site's css/style.css.
+   The dot snaps to the pointer every frame (JS-driven transform); the panther
+   (the EL VYNCE panther-head brand mark) is rAF-lerped a step behind with a
+   head-tilt/bob/pounce, also JS-driven — so CSS here only animates
+   opacity/size/filter, never transform, or it would fight the JS. mix-blend-
+   mode:difference (the source PNG is a solid white silhouette) makes it
+   self-invert over any background — always visible, never lost. */
+.ev-cursor-dot,
+.ev-cursor-panther {
   position: fixed;
   top: 0;
   left: 0;
-  width: 5px;
-  height: 5px;
-  background: var(--black);
-  border-radius: 50%;
   pointer-events: none;
-  z-index: 10000;
+  mix-blend-mode: difference;
   will-change: transform;
-  transition: transform 0.04s linear, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
-  transform: translate(-50%, -50%);
 }
 
-.ev-cursor-dot.is-hovering {
+.ev-cursor-dot {
   width: 3px;
   height: 3px;
-  opacity: 0.4;
-}
-
-.ev-cursor-dot.is-clicking {
-  width: 8px;
-  height: 8px;
-}
-
-.ev-cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--black);
+  margin: -1.5px 0 0 -1.5px;
   border-radius: 50%;
-  pointer-events: none;
+  background: #fff;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.35s ease, width 0.25s ease, height 0.25s ease,
+              border-radius 0.25s ease, margin 0.25s ease;
+}
+.ev-cursor-dot.is-shown { opacity: 1; }
+.ev-cursor-dot.is-hovering { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; }
+.ev-cursor-dot.is-hero-hover { width: 6px; height: 6px; margin: -3px 0 0 -3px; }
+.ev-cursor-dot.is-clicking { opacity: 0.5; }
+.ev-cursor-dot.is-view { opacity: 0; }
+
+.ev-cursor-dot.is-text {
+  width: 2px;
+  height: 22px;
+  margin: -11px 0 0 -1px;
+  border-radius: 1px;
+}
+
+.ev-cursor-panther {
+  width: 31px;
+  height: 42px;
+  margin: -21px 0 0 -15.5px;
+  background: url("/images/cursor/panther-cursor.png") no-repeat center / contain;
   z-index: 9999;
-  will-change: transform;
-  opacity: 0.5;
-  transform: translate(-50%, -50%);
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-              width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.3s ease;
+  opacity: 0;
+  transition: opacity 0.35s ease, width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+}
+.ev-cursor-panther.is-shown { opacity: 0.82; }
+
+.ev-cursor-panther.is-hovering {
+  width: 41px;
+  height: 55px;
+  margin: -27.5px 0 0 -20.5px;
+  opacity: 1;
 }
 
-.ev-cursor-ring.is-hovering {
-  width: 56px;
-  height: 56px;
-  opacity: 0.25;
+.ev-cursor-panther.is-hero-hover {
+  width: 36px;
+  height: 48.5px;
+  margin: -24.25px 0 0 -18px;
+  opacity: 1;
 }
 
-.ev-cursor-ring.is-clicking {
-  width: 28px;
-  height: 28px;
-  opacity: 0.8;
+.ev-cursor-panther.is-text { opacity: 0; }
+
+.ev-cursor-panther.is-view {
+  width: 62px;
+  height: 83.7px;
+  margin: -41.85px 0 0 -31px;
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-cursor-dot,
+  .ev-cursor-panther { transition: opacity 0.2s ease; }
 }
 
 .hero-wordmark-light .letter {
@@ -417,36 +442,75 @@ body.ev-has-hero.ev-stamp-in .ev-brand-stamp {
   display: block;
 }
 
-/* Panther Page Intro */
-.ev-panther-loader {
+/* Page loader — ported from the static site's css/style.css. Shown by
+   PageLoader.jsx on first mount and on every route change. Gotcha ported
+   along with it: opacity:0/visibility:hidden do NOT pause a running CSS
+   animation, so the breathe/sweep keyframes are explicitly paused via
+   animation-play-state below — without that they'd tick forever in the
+   background on every page. */
+#ev-page-loader {
   position: fixed;
   inset: 0;
-  z-index: 9000;
+  z-index: 100000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
-  background: #000000;
+  gap: 22px;
+  background: #fff;
   opacity: 1;
-  pointer-events: all;
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  visibility: visible;
+  transition: opacity 0.5s ease, visibility 0s linear 0s;
 }
-
-.ev-panther-loader.is-hidden {
+#ev-page-loader.is-hidden {
   opacity: 0;
-  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
 }
 
-.ev-panther-img {
-  width: 160px;
-  height: 160px;
-  object-fit: contain;
-  animation: ev-panther-breathe 2.2s ease-in-out infinite;
-  filter: invert(1);
+.ev-page-loader-mark {
+  width: 84px;
+  height: 113px;
+  background: url("/images/cursor/panther-loader.png") no-repeat center / contain;
+  animation: ev-loader-breathe 1.8s ease-in-out infinite;
+  transform-origin: 50% 65%;
+}
+#ev-page-loader.is-hidden .ev-page-loader-mark,
+#ev-page-loader.is-hidden .ev-page-loader-bar span {
+  animation-play-state: paused;
+}
+@media (min-width: 768px) {
+  .ev-page-loader-mark { width: 104px; height: 140px; }
 }
 
-@keyframes ev-panther-breathe {
-  0%, 100% { transform: scale(1);    opacity: 0.8; }
-  50%       { transform: scale(1.07); opacity: 1;   }
+@keyframes ev-loader-breathe {
+  0%, 100% { transform: scale(0.96) rotate(0deg); opacity: 0.88; }
+  50%      { transform: scale(1.04) rotate(2deg); opacity: 1; }
+}
+
+.ev-page-loader-bar {
+  width: 120px;
+  height: 2px;
+  background: #e5e5e5;
+  overflow: hidden;
+  position: relative;
+}
+.ev-page-loader-bar span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: #000;
+  animation: ev-loader-sweep 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes ev-loader-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-page-loader-mark { animation: none; }
+  .ev-page-loader-bar span { animation: none; left: 0; width: 100%; }
+  #ev-page-loader, #ev-page-loader.is-hidden { transition: opacity 0.2s ease; }
 }

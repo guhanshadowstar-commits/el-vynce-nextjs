@@ -1,13 +1,29 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { EL_VYNCE_PRODUCTS } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 
 export default function ShopPage() {
+  return (
+    <Suspense fallback={null}>
+      <ShopContent />
+    </Suspense>
+  );
+}
+
+function ShopContent() {
   const drops = useMemo(() => ["All", ...new Set(EL_VYNCE_PRODUCTS.map((p) => p.drop))], []);
+  const searchParams = useSearchParams();
   const [drop, setDrop] = useState("All");
   const [sort, setSort] = useState("default");
+
+  // Deep-link support for "Shop by Drop" chips on the homepage (/shop?drop=X).
+  useEffect(() => {
+    const dropParam = searchParams.get("drop");
+    if (dropParam && drops.includes(dropParam)) setDrop(dropParam);
+  }, [searchParams, drops]);
 
   const list = useMemo(() => {
     let l = EL_VYNCE_PRODUCTS.filter((p) => drop === "All" || p.drop === drop);
@@ -65,7 +81,7 @@ export default function ShopPage() {
       </section>
 
       <section className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-16">
           {list.map((p, i) => (
             <ProductCard key={p.id} product={p} delay={(i % 4) * 90} />
           ))}

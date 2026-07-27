@@ -4,6 +4,7 @@ import HeroWordmark from "@/components/HeroWordmark";
 import HeroSearchBar from "@/components/HeroSearchBar";
 import BrandStamp from "@/components/BrandStamp";
 import NewArrivals from "@/components/NewArrivals";
+import DropSections from "@/components/DropSections";
 
 export default function Home() {
   return (
@@ -34,6 +35,7 @@ export default function Home() {
 
       <main>
         <NewArrivals />
+        <DropSections />
       </main>
 
       <BrandStamp />

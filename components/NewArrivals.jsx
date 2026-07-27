@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { EL_VYNCE_PRODUCTS } from "@/lib/products";
-import { formatPrice } from "@/lib/format";
-import PlaceholderSwatch from "@/components/PlaceholderSwatch";
+import ProductCard from "@/components/ProductCard";
 
 /* "New Arrivals" / "The Latest Drop" featured grid — ported from index.html's
    #featured-grid, which was populated client-side by evRenderFeatured() in
@@ -25,31 +24,9 @@ export default function NewArrivals() {
         </Link>
       </div>
 
-      <div id="featured-grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-16">
+      <div id="featured-grid" className="grid grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-16">
         {featured.map((p, i) => (
-          <Link
-            key={p.id}
-            href={`/product/${p.id}`}
-            className="product-card group block"
-            data-reveal
-            data-reveal-delay={i * 90}
-          >
-            <div className="relative aspect-[3/4] overflow-hidden border border-outline-variant/40 mb-6 bg-surface-container">
-              <div className="absolute top-4 left-4 z-10 glass px-3 py-1 label-sm text-[10px]">{p.drop}</div>
-              {p.isNew && (
-                <div className="absolute top-4 right-4 z-10 glass bg-white/90 px-3 py-1 label-sm text-[10px]">New</div>
-              )}
-              {p.images && p.images.length ? (
-                <img src={p.images[0]} alt={p.name} className="product-image w-full h-full object-cover" />
-              ) : (
-                <PlaceholderSwatch product={p} sizeClass="product-image w-full h-full" />
-              )}
-            </div>
-            <div className="flex flex-col gap-1">
-              <h3 className="font-body-md text-body-md tracking-tight">{p.name}</h3>
-              <p className="label-sm text-secondary">{formatPrice(p.price)}</p>
-            </div>
-          </Link>
+          <ProductCard key={p.id} product={p} delay={i * 90} />
         ))}
       </div>
     </section>

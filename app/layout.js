@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import SiteInteractions from "@/components/SiteInteractions";
+import PageLoader from "@/components/PageLoader";
 
 const bodoniModa = Bodoni_Moda({
   variable: "--font-bodoni-moda",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="bg-white text-primary font-body-md overflow-x-hidden">
+        <PageLoader />
         <CartProvider>
           <Nav />
           {children}
