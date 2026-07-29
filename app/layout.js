@@ -47,7 +47,7 @@ export default function RootLayout({ children }) {
               url: "https://elvynce.com/",
               description:
                 "EL VYNCE — luxury minimal made-to-order Indian clothing. Achromatic, architectural, made for stillness.",
-              address: { "@type": "PostalAddress", addressLocality: "Chennai", addressCountry: "IN" },
+              address: { "@type": "PostalAddress", addressCountry: "IN" },
             }),
           }}
         />

@@ -39,7 +39,7 @@ function SearchResults() {
             </Link>
           </div>
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-gutter gap-y-16">
           {matches.map((p, i) => (
             <ProductCard key={p.id} product={p} delay={(i % 4) * 90} />
           ))}

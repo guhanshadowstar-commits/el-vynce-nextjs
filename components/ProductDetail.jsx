@@ -9,14 +9,6 @@ import { formatPrice } from "@/lib/format";
 import PlaceholderSwatch from "@/components/PlaceholderSwatch";
 import PdpViewer from "@/components/PdpViewer";
 
-const SIZE_CHART_ROWS = [
-  { size: "XS", chest: 96, length: 68, shoulder: 44 },
-  { size: "S", chest: 100, length: 70, shoulder: 45 },
-  { size: "M", chest: 104, length: 72, shoulder: 46 },
-  { size: "L", chest: 110, length: 74, shoulder: 47 },
-  { size: "XL", chest: 116, length: 76, shoulder: 48 },
-];
-
 export default function ProductDetail({ product }) {
   const { addToCart } = useCart();
   const { isWishlisted, toggleWishlist } = useWishlist();
@@ -224,28 +216,45 @@ export default function ProductDetail({ product }) {
               <span className="material-symbols-outlined">close</span>
             </button>
             <h2 className="font-headline-md text-headline-md mb-8">Size Chart — {product.drop}</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left label-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-primary/20">
-                    <th className="py-4 font-medium">Size</th>
-                    <th className="py-4 font-medium">Chest (cm)</th>
-                    <th className="py-4 font-medium">Length (cm)</th>
-                    <th className="py-4 font-medium">Shoulder (cm)</th>
-                  </tr>
-                </thead>
-                <tbody className="text-secondary">
-                  {SIZE_CHART_ROWS.map((row) => (
-                    <tr key={row.size} className="border-b border-outline-variant/40">
-                      <td className="py-4 text-primary">{row.size}</td>
-                      <td className="py-4">{row.chest}</td>
-                      <td className="py-4">{row.length}</td>
-                      <td className="py-4">{row.shoulder}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            {product.sizeChart ? (
+              (() => {
+                const columns = ["chest", "length", "shoulder", "sleeve"].filter((key) =>
+                  product.sizes.some((s) => product.sizeChart[s]?.[key])
+                );
+                return (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left label-sm border-collapse">
+                      <thead>
+                        <tr className="border-b border-primary/20">
+                          <th className="py-4 font-medium">Size</th>
+                          {columns.map((col) => (
+                            <th key={col} className="py-4 font-medium capitalize">
+                              {col}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="text-secondary">
+                        {product.sizes.map((s) => (
+                          <tr key={s} className="border-b border-outline-variant/40">
+                            <td className="py-4 text-primary">{s}</td>
+                            {columns.map((col) => (
+                              <td key={col} className="py-4">
+                                {product.sizeChart[s]?.[col] || "—"}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })()
+            ) : (
+              <p className="text-secondary">
+                Size chart for this piece is coming soon — email elvynceofficial@gmail.com for measurements.
+              </p>
+            )}
             <p className="mt-8 text-secondary italic text-sm">
               *Every EL VYNCE piece is cut after you order — not pulled off a shelf. Want it tailored to your exact
               frame? Email elvynceofficial@gmail.com and we&apos;ll fit it to your measurements before it&apos;s cut.

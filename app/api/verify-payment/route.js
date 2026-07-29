@@ -15,6 +15,7 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { getProductById } from "@/lib/products";
 import { createOrderRow, notionConfigured } from "@/lib/notion";
+import { sendOrderConfirmationEmail, emailConfigured } from "@/lib/email";
 
 export async function POST(request) {
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -59,6 +60,12 @@ export async function POST(request) {
     };
   });
   const amount = safeItems.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const safeCustomer = {
+    name: String(customer?.name || "").slice(0, 200),
+    email: String(customer?.email || "").slice(0, 200),
+    phone: String(customer?.phone || "").slice(0, 30),
+    address: String(customer?.address || "").slice(0, 1000),
+  };
 
   if (notionConfigured()) {
     try {
@@ -66,12 +73,7 @@ export async function POST(request) {
         orderId: razorpay_order_id,
         paymentId: razorpay_payment_id,
         amount,
-        customer: {
-          name: String(customer?.name || "").slice(0, 200),
-          email: String(customer?.email || "").slice(0, 200),
-          phone: String(customer?.phone || "").slice(0, 30),
-          address: String(customer?.address || "").slice(0, 1000),
-        },
+        customer: safeCustomer,
         items: safeItems,
         status: "New",
       });
@@ -80,6 +82,23 @@ export async function POST(request) {
     }
   } else {
     console.warn("Notion CRM not configured — verified order not recorded:", razorpay_order_id);
+  }
+
+  // Best-effort, same rule as the CRM write: an email outage must never fail
+  // a verified payment. Runs after Notion so the order is already recorded
+  // even if sending the email throws.
+  if (emailConfigured() && safeCustomer.email) {
+    try {
+      await sendOrderConfirmationEmail({
+        orderId: razorpay_order_id,
+        paymentId: razorpay_payment_id,
+        amount,
+        customer: safeCustomer,
+        items: safeItems,
+      });
+    } catch (err) {
+      console.error("Order confirmation email failed (payment IS verified, order IS real):", err);
+    }
   }
 
   return NextResponse.json({ ok: true, paymentId: razorpay_payment_id });

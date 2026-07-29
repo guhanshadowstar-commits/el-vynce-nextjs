@@ -378,7 +378,7 @@ header.is-night a.bg-primary.text-on-primary {
 }
 
 @media (pointer: coarse) {
-  .ev-cursor-dot, .ev-cursor-ring { display: none; }
+  .ev-cursor-dot, .ev-cursor-panther { display: none; }
 }
 
 /* Spinning Brand Stamp */

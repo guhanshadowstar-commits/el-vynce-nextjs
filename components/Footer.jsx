@@ -22,7 +22,7 @@ export default function Footer() {
             Contact
           </Link>
         </div>
-        <p className="label-sm text-xs text-secondary">© 2026 EL VYNCE. Made in Chennai, India.</p>
+        <p className="label-sm text-xs text-secondary">© 2026 EL VYNCE. Made in India.</p>
       </div>
     </footer>
   );

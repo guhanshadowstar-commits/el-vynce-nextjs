@@ -43,11 +43,11 @@ export default function AboutPage() {
       </section>
 
       <section className="mb-16" data-reveal>
-        <h2 className="font-headline-md text-headline-md mb-6">Made in Chennai, Made to Order</h2>
+        <h2 className="font-headline-md text-headline-md mb-6">Made to Order</h2>
         <div className="space-y-6 text-secondary leading-relaxed">
           <p>
-            EL Vynce is based in Chennai, Tamil Nadu, India, and operates as a made-to-order partnership firm
-            — every piece is crafted only after you place your order. Production timelines and delivery
+            EL Vynce operates as a made-to-order partnership firm based in India — every piece is crafted
+            only after you place your order. Production timelines and delivery
             details are outlined on our{" "}
             <Link className="text-primary underline" href="/shipping-returns">
               Shipping &amp; Returns

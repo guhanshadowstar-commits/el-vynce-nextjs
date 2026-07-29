@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
       <section className="mb-16" data-reveal>
         <h2 className="font-headline-md text-headline-md mb-6">About EL Vynce</h2>
         <p className="text-secondary leading-relaxed">
-          EL Vynce operates as an online clothing and lifestyle brand based in Chennai, Tamil Nadu, India, as
+          EL Vynce operates as an online clothing and lifestyle brand based in India, as
           a partnership firm specializing in made-to-order apparel. Due to the bespoke nature of our
           products, sales are final once production begins.
         </p>
@@ -76,7 +76,7 @@ export default function TermsOfServicePage() {
         <h2 className="font-headline-md text-headline-md mb-6">Governing Law</h2>
         <p className="text-secondary leading-relaxed">
           These Terms are governed by the laws of India, with exclusive jurisdiction in the courts of
-          Chennai.
+          India.
         </p>
       </section>
 
