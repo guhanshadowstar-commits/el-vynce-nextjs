@@ -7,7 +7,6 @@ import { useCart } from "@/lib/CartContext";
 import { useWishlist } from "@/lib/WishlistContext";
 import { formatPrice } from "@/lib/format";
 import PlaceholderSwatch from "@/components/PlaceholderSwatch";
-import PdpViewer from "@/components/PdpViewer";
 
 export default function ProductDetail({ product }) {
   const { addToCart } = useCart();
@@ -15,7 +14,6 @@ export default function ProductDetail({ product }) {
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState(product.inStock ? product.sizes[0] : null);
-  const [show3D, setShow3D] = useState(false);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [feedback, setFeedback] = useState(false);
 
@@ -53,26 +51,6 @@ export default function ProductDetail({ product }) {
             <div className="absolute top-6 left-6 glass px-4 py-2">
               <span className="label-sm">{product.drop}</span>
             </div>
-            <div className="absolute bottom-6 right-6 flex flex-col items-end gap-3">
-              <button
-                className="glass h-12 w-12 flex items-center justify-center hover:bg-white transition-colors"
-                onClick={() => setShow3D((v) => !v)}
-                aria-label="Toggle 3D preview"
-              >
-                <span className="material-symbols-outlined text-primary">3d_rotation</span>
-              </button>
-            </div>
-            {show3D && (
-              <div className="absolute inset-0 z-10 bg-surface-container">
-                <PdpViewer />
-                <button
-                  className="absolute top-6 right-6 glass h-10 w-10 flex items-center justify-center z-20"
-                  onClick={() => setShow3D(false)}
-                >
-                  <span className="material-symbols-outlined">close</span>
-                </button>
-              </div>
-            )}
           </div>
           <div className="flex gap-4 overflow-x-auto no-scrollbar">
             {(product.images || []).map((img, i) => (
