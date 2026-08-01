@@ -2,6 +2,7 @@ import Link from "next/link";
 import HeroScene from "@/components/HeroScene";
 import HeroWordmark from "@/components/HeroWordmark";
 import HeroSearchBar from "@/components/HeroSearchBar";
+import HeroInteractionHint from "@/components/HeroInteractionHint";
 import BrandStamp from "@/components/BrandStamp";
 import NewArrivals from "@/components/NewArrivals";
 import DropSections from "@/components/DropSections";
@@ -9,7 +10,7 @@ import DropSections from "@/components/DropSections";
 export default function Home() {
   return (
     <>
-      <header className="relative w-full h-screen min-h-[640px] overflow-hidden bg-white">
+      <header className="relative w-full h-[78vh] min-h-[460px] max-h-[720px] md:h-[640px] overflow-hidden bg-white">
         <HeroScene />
         <div className="absolute inset-0 bg-black/5 pointer-events-none" />
 
@@ -17,7 +18,9 @@ export default function Home() {
           <HeroWordmark />
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full px-margin-mobile md:px-margin-desktop pb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6 max-w-container-max mx-auto">
+        <HeroInteractionHint />
+
+        <div className="absolute bottom-0 left-0 w-full px-margin-mobile md:px-margin-desktop pb-8 md:pb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6 max-w-container-max mx-auto">
           <p className="font-body-lg text-body-lg text-primary max-w-md">
             Made-to-order Indian clothing, cut for stillness. Every piece begins after you place your order.
           </p>
