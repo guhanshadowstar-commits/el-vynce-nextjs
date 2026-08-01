@@ -21,9 +21,9 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "EL VYNCE — Modern Luxury Streetwear, India",
+  title: "EL VYNCE — Minimalist Luxury. Quiet Power.",
   description:
-    "EL VYNCE is a modern luxury streetwear label from India — oversized tees, statement prints, and waffle-knits in achromatic, architectural silhouettes.",
+    "EL VYNCE creates minimalist luxury clothing — clean lines and careful craftsmanship for people who lead without needing to prove it.",
 };
 
 export default function RootLayout({ children }) {
@@ -43,7 +43,7 @@ export default function RootLayout({ children }) {
               name: "EL VYNCE",
               url: "https://elvynce.in/",
               description:
-                "EL VYNCE is a modern luxury streetwear label from India — oversized tees, statement prints, and waffle-knits in achromatic, architectural silhouettes.",
+                "EL VYNCE creates minimalist luxury clothing — clean lines and careful craftsmanship for people who lead without needing to prove it.",
               address: { "@type": "PostalAddress", addressCountry: "IN" },
             }),
           }}
