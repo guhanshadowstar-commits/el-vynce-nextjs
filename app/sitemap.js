@@ -1,6 +1,6 @@
 import { EL_VYNCE_PRODUCTS } from "@/lib/products";
 
-const BASE = "https://elvynce.com";
+const BASE = "https://elvynce.in";
 
 export default function sitemap() {
   const staticRoutes = [

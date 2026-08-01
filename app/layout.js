@@ -21,12 +21,9 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "EL VYNCE — Made-to-Order Indian Clothing",
+  title: "EL VYNCE — Modern Luxury Streetwear, India",
   description:
-    "EL VYNCE — luxury minimal made-to-order Indian clothing. Achromatic, architectural, made for stillness.",
-  icons: {
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='white'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='32' text-anchor='middle' fill='black'%3EEL%3C/text%3E%3C/svg%3E",
-  },
+    "EL VYNCE is a modern luxury streetwear label from India — oversized tees, statement prints, and waffle-knits in achromatic, architectural silhouettes.",
 };
 
 export default function RootLayout({ children }) {
@@ -44,9 +41,9 @@ export default function RootLayout({ children }) {
               "@context": "https://schema.org",
               "@type": "ClothingStore",
               name: "EL VYNCE",
-              url: "https://elvynce.com/",
+              url: "https://elvynce.in/",
               description:
-                "EL VYNCE — luxury minimal made-to-order Indian clothing. Achromatic, architectural, made for stillness.",
+                "EL VYNCE is a modern luxury streetwear label from India — oversized tees, statement prints, and waffle-knits in achromatic, architectural silhouettes.",
               address: { "@type": "PostalAddress", addressCountry: "IN" },
             }),
           }}

@@ -7,6 +7,6 @@ export default function robots() {
         disallow: ["/api/", "/account"],
       },
     ],
-    sitemap: "https://elvynce.com/sitemap.xml",
+    sitemap: "https://elvynce.in/sitemap.xml",
   };
 }
