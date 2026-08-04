@@ -8,7 +8,8 @@ import ProductCard from "@/components/ProductCard";
    15-product catalogue, grouped by drop, same as the static site. Server
    component — the data is static, no client JS needed to render it. */
 export default function DropSections() {
-  const drops = [...new Set(EL_VYNCE_PRODUCTS.map((p) => p.drop))];
+  const visibleProducts = EL_VYNCE_PRODUCTS.filter((p) => !p.hidden);
+  const drops = [...new Set(visibleProducts.map((p) => p.drop))];
 
   return (
     <>
@@ -32,7 +33,7 @@ export default function DropSections() {
       </section>
 
       {drops.map((d) => {
-        const items = EL_VYNCE_PRODUCTS.filter((p) => p.drop === d);
+        const items = visibleProducts.filter((p) => p.drop === d);
         return (
           <section key={d} className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pb-section-gap">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-16" data-reveal>

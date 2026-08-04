@@ -14,7 +14,8 @@ export default function ShopPage() {
 }
 
 function ShopContent() {
-  const drops = useMemo(() => ["All", ...new Set(EL_VYNCE_PRODUCTS.map((p) => p.drop))], []);
+  const visibleProducts = useMemo(() => EL_VYNCE_PRODUCTS.filter((p) => !p.hidden), []);
+  const drops = useMemo(() => ["All", ...new Set(visibleProducts.map((p) => p.drop))], [visibleProducts]);
   const searchParams = useSearchParams();
   const [drop, setDrop] = useState("All");
   const [sort, setSort] = useState("default");
@@ -26,7 +27,7 @@ function ShopContent() {
   }, [searchParams, drops]);
 
   const list = useMemo(() => {
-    let l = EL_VYNCE_PRODUCTS.filter((p) => drop === "All" || p.drop === drop);
+    let l = visibleProducts.filter((p) => drop === "All" || p.drop === drop);
     if (sort === "price-asc") l = l.slice().sort((a, b) => a.price - b.price);
     if (sort === "price-desc") l = l.slice().sort((a, b) => b.price - a.price);
     if (sort === "name-asc") l = l.slice().sort((a, b) => a.name.localeCompare(b.name));

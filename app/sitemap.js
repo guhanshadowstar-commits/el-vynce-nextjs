@@ -14,7 +14,7 @@ export default function sitemap() {
     { url: `${BASE}/terms-of-service`, priority: 0.3, changeFrequency: "yearly" },
   ];
 
-  const productRoutes = EL_VYNCE_PRODUCTS.map((p) => ({
+  const productRoutes = EL_VYNCE_PRODUCTS.filter((p) => !p.hidden).map((p) => ({
     url: `${BASE}/product/${p.id}`,
     priority: 0.8,
     changeFrequency: "weekly",
