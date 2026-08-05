@@ -21,7 +21,7 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { buildSafeItems, decodeItemsFromNotes } from "@/lib/orderItems";
-import { createOrderRow, notionConfigured } from "@/lib/notion";
+import { createOrderRow, flagIfDuplicate, notionConfigured } from "@/lib/notion";
 
 export async function POST(request) {
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -84,6 +84,15 @@ export async function POST(request) {
         // Non-2xx tells Razorpay to retry later — exactly what we want if Notion was down.
         console.error("Webhook → Notion failed, asking Razorpay to retry:", err);
         return NextResponse.json({ error: "crm_write_failed" }, { status: 500 });
+      }
+      // Best-effort: catches the rare case where this webhook call and a
+      // verify-payment call (or a Razorpay retry of this same webhook) land
+      // close enough together to both write. Never allowed to fail the
+      // response — Notion already has the order recorded either way.
+      try {
+        await flagIfDuplicate(payment.order_id || "");
+      } catch (err) {
+        console.error("Duplicate-row check failed (non-fatal):", err);
       }
     }
   }

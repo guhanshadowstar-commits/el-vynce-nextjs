@@ -33,7 +33,7 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { buildSafeItems, computeAmount } from "@/lib/orderItems";
-import { createOrderRow, notionConfigured } from "@/lib/notion";
+import { createOrderRow, flagIfDuplicate, notionConfigured } from "@/lib/notion";
 import { sendOrderConfirmationEmail, emailConfigured } from "@/lib/email";
 
 export async function POST(request) {
@@ -137,6 +137,15 @@ export async function POST(request) {
       isFirstRecord = result.isFirstRecord;
     } catch (err) {
       console.error("Notion CRM write failed (payment IS verified, order IS real):", err);
+    }
+    // Best-effort: if a race with the webhook still produced two rows for
+    // this order, flag them instead of leaving it for someone to notice by
+    // accident. Never allowed to affect the response — the order write above
+    // already succeeded regardless of what this finds.
+    try {
+      await flagIfDuplicate(razorpay_order_id);
+    } catch (err) {
+      console.error("Duplicate-row check failed (non-fatal):", err);
     }
   } else {
     console.warn("Notion CRM not configured — verified order not recorded:", razorpay_order_id);
