@@ -5,14 +5,23 @@
    Razorpay's own servers POST here on payment.captured, so every captured
    payment reaches the CRM even if the customer never saw the success page.
 
+   Because this path never hears from the browser, the only place customer
+   name/phone/email/address/items can come from is the `notes` that
+   create-order stashed on the Razorpay order when it was first created (see
+   app/api/create-order/route.js). We decode those and write a FULL row via
+   the same createOrderRow used by verify-payment — not a bare stub — so a
+   dead browser doesn't mean an incomplete CRM record.
+
    Authenticity check: Razorpay signs the RAW request body with the webhook
-   secret (a separate secret, set when creating the webhook in the Razorpay
-   dashboard → Settings → Webhooks). We recompute the HMAC over the exact raw
-   bytes — parsing JSON first and re-stringifying would break the signature. */
+   secret (a separate secret, generated when the webhook was registered via
+   the Razorpay API — see RAZORPAY_WEBHOOK_SECRET). We recompute the HMAC
+   over the exact raw bytes — parsing JSON first and re-stringifying would
+   break the signature. */
 
 import crypto from "crypto";
 import { NextResponse } from "next/server";
-import { confirmOrderPaid, notionConfigured } from "@/lib/notion";
+import { buildSafeItems, decodeItemsFromNotes } from "@/lib/orderItems";
+import { createOrderRow, notionConfigured } from "@/lib/notion";
 
 export async function POST(request) {
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -43,11 +52,34 @@ export async function POST(request) {
     return NextResponse.json({ error: "bad_json" }, { status: 400 });
   }
 
-  if (event.event === "payment.captured") {
+  if (event.event === "payment.captured" || event.event === "order.paid") {
     const payment = event.payload?.payment?.entity || {};
+    const notes = payment.notes || event.payload?.order?.entity?.notes || {};
+
+    // Amount comes straight from Razorpay's own payment entity — authoritative,
+    // no client involved on this path at all, so no cross-check needed here
+    // (contrast with verify-payment, which has to distrust the browser).
+    const amountInr = (payment.amount || 0) / 100;
+    const decodedItems = decodeItemsFromNotes(notes.items_encoded);
+    const safeItems = decodedItems.length
+      ? buildSafeItems(decodedItems)
+      : [{ name: notes.items_summary || "Captured via webhook — item detail unavailable, check Razorpay dashboard", price: 0, qty: 1 }];
+
     if (notionConfigured()) {
       try {
-        await confirmOrderPaid(payment.order_id || "", payment.id || "", (payment.amount || 0) / 100);
+        await createOrderRow({
+          orderId: payment.order_id || "",
+          paymentId: payment.id || "",
+          amount: amountInr,
+          customer: {
+            name: notes.customer_name || "",
+            email: notes.customer_email || "",
+            phone: notes.customer_phone || "",
+            address: notes.customer_address || "",
+          },
+          items: safeItems,
+          status: "New",
+        });
       } catch (err) {
         // Non-2xx tells Razorpay to retry later — exactly what we want if Notion was down.
         console.error("Webhook → Notion failed, asking Razorpay to retry:", err);

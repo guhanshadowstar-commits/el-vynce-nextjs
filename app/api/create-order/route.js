@@ -4,12 +4,22 @@
    The AMOUNT is computed here from lib/products.js — the client never sends
    prices, so a tampered request can't buy a ₹18,500 bandhgala for ₹1.
 
+   The full customer + item detail gets stashed in the Razorpay order's
+   `notes` (name, phone, email, address, and a compact machine-readable item
+   encoding). This is what lets the webhook in app/api/razorpay-webhook —
+   which hears about a payment straight from Razorpay, independent of the
+   customer's browser — reconstruct a COMPLETE order record even if the
+   browser died before ever calling /api/verify-payment. Without this, a
+   dropped connection right after payment would mean the order is captured
+   for real money but never fully recorded anywhere.
+
    RAZORPAY_KEY_SECRET lives only in env vars (Vercel dashboard / .env.local)
    and only ever runs here on the server. The browser receives just the order
    id + public key id needed to open Razorpay's checkout modal. */
 
 import { NextResponse } from "next/server";
 import { getProductById } from "@/lib/products";
+import { encodeItemsForNotes } from "@/lib/orderItems";
 
 export async function POST(request) {
   const keyId = process.env.RAZORPAY_KEY_ID;
@@ -56,10 +66,17 @@ export async function POST(request) {
     body: JSON.stringify({
       amount: amountInr * 100, // Razorpay counts in paise
       currency: "INR",
+      // Razorpay caps each note value at 256 chars — everything here is
+      // pre-truncated to fit with margin. `items_encoded` carries the exact
+      // {id, size, color, qty} list (see lib/orderItems.js) so the webhook
+      // can reconstruct real line items, not just a human-readable summary.
       notes: {
         customer_name: String(customer.name || "").slice(0, 100),
         customer_phone: String(customer.phone || "").slice(0, 20),
-        items: lineItems.map((l) => `${l.qty}x ${l.name}`).join(", ").slice(0, 250),
+        customer_email: String(customer.email || "").slice(0, 100),
+        customer_address: String(customer.address || "").slice(0, 240),
+        items_summary: lineItems.map((l) => `${l.qty}x ${l.name}`).join(", ").slice(0, 240),
+        items_encoded: encodeItemsForNotes(items),
       },
     }),
   });
