@@ -67,7 +67,7 @@ export async function POST(request) {
       : [{ name: notes.items_summary || "Captured via webhook — item detail unavailable, check Razorpay dashboard", price: 0, qty: 1 }];
     const ga4ClientId = notes.ga4_client_id || "";
 
-    let isFirstRecord = true;
+    let isFirstRecord = false;
     if (notionConfigured()) {
       try {
         const result = await createOrderRow({
@@ -98,27 +98,27 @@ export async function POST(request) {
       } catch (err) {
         console.error("Duplicate-row check failed (non-fatal):", err);
       }
-    }
 
-    // Send GA4 purchase event (non-blocking, fire-and-forget)
-    // Only send on first record to prevent duplicate events on webhook retry.
-    // Runs regardless of Notion config — GA4 tracking is independent.
-    if (isFirstRecord && ga4ClientId) {
-      sendPurchaseEvent({
-        clientId: ga4ClientId,
-        transactionId: payment.id || "",
-        amount: amountInr,
-        currency: 'INR',
-        items: safeItems.map(i => ({
-          id: i.id || '',
-          name: i.name || '',
-          price: i.price || 0,
-          qty: i.qty || 1,
-          category: i.category || 'Uncategorized'
-        }))
-      }).catch(err => {
-        console.error('Webhook → GA4 purchase event failed (non-fatal):', err);
-      });
+      // Send GA4 purchase event (non-blocking, fire-and-forget)
+      // Only send on first record to prevent duplicate events on webhook retry.
+      // Only fires if Notion is configured (needed to track isFirstRecord reliably).
+      if (isFirstRecord && ga4ClientId) {
+        sendPurchaseEvent({
+          clientId: ga4ClientId,
+          transactionId: payment.id || "",
+          amount: amountInr,
+          currency: 'INR',
+          items: safeItems.map(i => ({
+            id: i.id || '',
+            name: i.name || '',
+            price: i.price || 0,
+            qty: i.qty || 1,
+            category: i.category || 'Uncategorized'
+          }))
+        }).catch(err => {
+          console.error('Webhook → GA4 purchase event failed (non-fatal):', err);
+        });
+      }
     }
   }
 

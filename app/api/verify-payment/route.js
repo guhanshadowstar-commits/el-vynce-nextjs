@@ -126,7 +126,7 @@ export async function POST(request) {
   // spuriously re-notify the owner. createOrderRow reports whether this call
   // was the first time a real customer email got attached to this order —
   // covers the case where the webhook wrote a bare stub row first.
-  let isFirstRecord = true;
+  let isFirstRecord = false;
   if (notionConfigured()) {
     try {
       const result = await createOrderRow({
@@ -150,29 +150,28 @@ export async function POST(request) {
     } catch (err) {
       console.error("Duplicate-row check failed (non-fatal):", err);
     }
-  } else {
-    console.warn("Notion CRM not configured — verified order not recorded:", razorpay_order_id);
-  }
 
-  // Send GA4 purchase event (non-blocking, fire-and-forget)
-  // Only send on first record to prevent duplicate events on webhook retry
-  // Skip for needs-review orders — the items aren't verified yet
-  if (!needsReview && isFirstRecord && ga4ClientId) {
-    sendPurchaseEvent({
-      clientId: ga4ClientId,
-      transactionId: razorpay_payment_id,
-      amount: recordedAmount,
-      currency: 'INR',
-      items: safeItems.map(i => ({
-        id: i.id || '',
-        name: i.name || '',
-        price: i.price || 0,
-        qty: i.qty || 1,
-        category: i.category || 'Uncategorized'
-      }))
-    }).catch(err => {
-      console.error('Verify-payment → GA4 purchase event failed (non-fatal):', err);
-    });
+    // Send GA4 purchase event (non-blocking, fire-and-forget)
+    // Only send on first record to prevent duplicate events on webhook retry
+    // Skip for needs-review orders — the items aren't verified yet
+    // Only fires if Notion is configured (needed to track isFirstRecord reliably).
+    if (!needsReview && isFirstRecord && ga4ClientId) {
+      sendPurchaseEvent({
+        clientId: ga4ClientId,
+        transactionId: razorpay_payment_id,
+        amount: recordedAmount,
+        currency: 'INR',
+        items: safeItems.map(i => ({
+          id: i.id || '',
+          name: i.name || '',
+          price: i.price || 0,
+          qty: i.qty || 1,
+          category: i.category || 'Uncategorized'
+        }))
+      }).catch(err => {
+        console.error('Verify-payment → GA4 purchase event failed (non-fatal):', err);
+      });
+    }
   }
 
   // Best-effort, same rule as the CRM write: an email outage must never fail
