@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { EL_VYNCE_PRODUCTS } from "@/lib/products";
 import { useCart } from "@/lib/CartContext";
 import { useWishlist } from "@/lib/WishlistContext";
 import { formatPrice } from "@/lib/format";
 import PlaceholderSwatch from "@/components/PlaceholderSwatch";
+import { trackProductView, trackAddToCart } from "@/lib/ga4";
 
 export default function ProductDetail({ product }) {
   const { addToCart } = useCart();
@@ -17,11 +18,16 @@ export default function ProductDetail({ product }) {
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [feedback, setFeedback] = useState(false);
 
+  // Track product view on mount
+  useEffect(() => {
+    trackProductView(product);
+  }, [product]);
+
   const others = EL_VYNCE_PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
 
   const handleAddToCart = () => {
     if (!product.inStock) return;
-    addToCart({
+    const item = {
       id: product.id,
       name: product.name,
       price: product.price,
@@ -31,7 +37,10 @@ export default function ProductDetail({ product }) {
       placeholderSwatch: product.placeholderSwatch || null,
       drop: product.drop,
       qty: 1,
-    });
+    };
+    addToCart(item);
+    // Track GA4 add-to-cart event
+    trackAddToCart([item], product.price);
     setFeedback(true);
     setTimeout(() => setFeedback(false), 2500);
   };

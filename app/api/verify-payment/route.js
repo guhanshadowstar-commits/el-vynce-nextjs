@@ -35,6 +35,7 @@ import { NextResponse } from "next/server";
 import { buildSafeItems, computeAmount } from "@/lib/orderItems";
 import { createOrderRow, flagIfDuplicate, notionConfigured } from "@/lib/notion";
 import { sendOrderConfirmationEmail, emailConfigured } from "@/lib/email";
+import { sendPurchaseEvent } from "@/lib/ga4-server";
 
 export async function POST(request) {
   const keyId = process.env.RAZORPAY_KEY_ID;
@@ -50,10 +51,12 @@ export async function POST(request) {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
 
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, customer, items } = body;
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, customer, items, clientId } = body;
   if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
     return NextResponse.json({ error: "missing_fields" }, { status: 400 });
   }
+
+  const ga4ClientId = clientId || "";
 
   const expected = crypto
     .createHmac("sha256", keySecret)
@@ -149,6 +152,27 @@ export async function POST(request) {
     }
   } else {
     console.warn("Notion CRM not configured — verified order not recorded:", razorpay_order_id);
+  }
+
+  // Send GA4 purchase event (non-blocking, fire-and-forget)
+  // Only send on first record to prevent duplicate events on webhook retry
+  // Skip for needs-review orders — the items aren't verified yet
+  if (!needsReview && isFirstRecord && ga4ClientId) {
+    sendPurchaseEvent({
+      clientId: ga4ClientId,
+      transactionId: razorpay_payment_id,
+      amount: recordedAmount,
+      currency: 'INR',
+      items: safeItems.map(i => ({
+        id: i.id || '',
+        name: i.name || '',
+        price: i.price || 0,
+        qty: i.qty || 1,
+        category: i.category || 'Uncategorized'
+      }))
+    }).catch(err => {
+      console.error('Verify-payment → GA4 purchase event failed (non-fatal):', err);
+    });
   }
 
   // Best-effort, same rule as the CRM write: an email outage must never fail

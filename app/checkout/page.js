@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/CartContext";
 import { formatPrice } from "@/lib/format";
 import PlaceholderSwatch from "@/components/PlaceholderSwatch";
+import { trackBeginCheckout, getClientId } from "@/lib/ga4";
 
 /* Checkout — collects the customer's details, then runs the Razorpay flow:
    1. POST /api/create-order (server recomputes the price and creates the
@@ -71,12 +72,16 @@ export default function CheckoutPage() {
       address: `${form.address.trim()}, ${form.city.trim()}, ${form.state.trim()} — ${form.pincode.trim()}`,
     };
     const items = cart.map((c) => ({ id: c.id, size: c.size, color: c.color, qty: c.qty }));
+    const clientId = getClientId();
+
+    // Track GA4 begin_checkout event
+    trackBeginCheckout(items, subtotal);
 
     try {
       const orderRes = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, customer }),
+        body: JSON.stringify({ items, customer, clientId }),
       });
 
       if (orderRes.status === 503) {

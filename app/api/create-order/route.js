@@ -57,6 +57,7 @@ export async function POST(request) {
   }
 
   const customer = body.customer || {};
+  const ga4ClientId = body.clientId || "";
   const res = await fetch("https://api.razorpay.com/v1/orders", {
     method: "POST",
     headers: {
@@ -77,6 +78,7 @@ export async function POST(request) {
         customer_address: String(customer.address || "").slice(0, 240),
         items_summary: lineItems.map((l) => `${l.qty}x ${l.name}`).join(", ").slice(0, 240),
         items_encoded: encodeItemsForNotes(items),
+        ga4_client_id: String(ga4ClientId).slice(0, 100),
       },
     }),
   });
